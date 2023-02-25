@@ -8,6 +8,7 @@ from data_manager.utils.file_manager import list_folders
 from tree.utils.calculs.Variable import Variable 
 from tree.utils.calculs.Variable_env import Variable_env
 from tree.utils.calculs.Variable_spotify import Variable_spotify
+from tree.scenario.Scenario import MARKER
 
 from tree.Environnement import Environnement
 
@@ -56,15 +57,23 @@ def get_modes(modes, env):
     getter = modes.get_getter()
     for link in modes:
         mode, preset = link.get_str("mode", mandatory = True), link.get_str("preset", mandatory = True)
-        try:
-            getter.get_mode(mode)
-        except (KeyError, ValueError):
-            link.raise_error("Undefine mode {}".format(mode))
+        marker = link.get_str("marker") 
+        marker = MARKER[marker] if marker else None
+        if mode.count(","):
+            modes = mode.split(",")
+        else:
+            modes = [mode]
         try:
             preset = getter.get_preset(env, preset)
         except (KeyError, ValueError):
-            link.raise_error("Undefine preset {}".format(mode))
-        env.add_mode(mode, preset)
+            link.raise_error("Undefine preset {}".format(preset))
+
+        for mode in modes:
+            try:
+                getter.get_mode(mode.strip())
+            except (KeyError, ValueError):
+                link.raise_error("Undefine mode {}".format(mode))
+            env.add_mode(mode.strip(), preset, marker)
 
 def get_variables(variables, *args):
     env = args[0]

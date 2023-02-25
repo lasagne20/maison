@@ -153,7 +153,7 @@ def get_inst_spotify(env, name, delay, duration, args, synchro):
     except KeyError:
         args.raise_error("Spotify action {} not define this is the allowed keys :\n {}".
                         format(str(args), [arg.name for arg in TYPE_INST_SPOTIFY]))
-    return Instruction_spotify(env.get_calculator(), name.get_spotify(), type_inst, val, delay, synchro)
+    return Instruction_spotify(env.get_calculator(), name.get_spotify(), type_inst, val, delay, duration, synchro)
 
 def get_inst_interrupt(env, name, delay, duration, args, synchro):
     manager = name.get_getter().get_manager()

@@ -10,5 +10,3 @@ configure_boards(manager)
 config_interrupt(manager)
 
 manager.start()
-
-Event().wait()

@@ -8,21 +8,25 @@ except (RuntimeError, ModuleNotFoundError):
     import fake_rpigpio.utils
     fake_rpigpio.utils.install()
 
-class Interrupt_GPIO(Interrupt):
+class Interrupt_GPIO_state(Interrupt):
     """
     It is a GPIO interrupt
     """
     def __init__(self, name, name_env, pin, client):
         Interrupt.__init__(self, name, name_env, client)
         self.pin = pin
-        GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(pin, GPIO.RISING, callback=self.press)
         self.value = GPIO.input(pin)
+        if (GPIO.input(pin) == GPIO.LOW): # the interrupts is already on
+            sleep(1)
+            super().press()
 
     def press(self, event):
-        if (self.value != GPIO.input(event) and GPIO.input(event) == 1):
-            super().press()
-        self.value = GPIO.input(event)
+        print("press")
+        if (self.value != GPIO.input(event)):
+            self.value = GPIO.input(event)
+            super().press(state = not(self.value))
 
     def __str__(self):
         return "type : gpio | pin : {}".format(self.pin)

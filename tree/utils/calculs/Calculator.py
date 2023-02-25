@@ -37,7 +37,7 @@ class Calculator:
             try:
                 return eval(string)
             except SyntaxError as e:
-                expression.raise_error(str(e))
+                expression.raise_error(f"{e} in {string}")
 
     def get_value(self, var_name, expression, inst):
         try:

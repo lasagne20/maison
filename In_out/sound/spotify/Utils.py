@@ -3,6 +3,7 @@ import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
 from tree.utils.Logger import Logger
 from time import sleep
+from requests.exceptions import ConnectionError
 
 def token_check(func):
     def wrapper(*args, **kwargs):
@@ -29,23 +30,21 @@ class SP:
         self.get_token()
 
     def get_token(self):
-        self.token = util.prompt_for_user_token(self.name,
-                                SCOPE,
-                                cache_path = ".spotipy-cache",
-                                client_id = self.secrets.get_str("client_id", mandatory=True),
-                                client_secret = self.secrets.get_str("client_secret", mandatory=True),
-                                redirect_uri = 'http://localhost:8888/callback')
+        try:
+            self.token = util.prompt_for_user_token(self.name,
+                                    SCOPE,
+                                    cache_path = ".spotipy-cache",
+                                    client_id = self.secrets.get_str("client_id", mandatory=True),
+                                    client_secret = self.secrets.get_str("client_secret", mandatory=True),
+                                    redirect_uri = 'http://localhost:8888/callback')
+        except ConnectionError as e:
+            Logger.error(f"Could not get token : {e}")
+            return
         self.sp = spotipy.Spotify(auth=self.token)
 
     def refresh_token(self):
         print("refresh  token")
-        self.token = util.prompt_for_user_token(self.name,
-                                SCOPE,
-                                cache_path = ".spotipy-cache",
-                                client_id = self.secrets.get_str("client_id", mandatory=True),
-                                client_secret = self.secrets.get_str("client_secret", mandatory=True),
-                                redirect_uri = 'http://localhost:8888/callback')
-        self.sp = spotipy.Spotify(auth=self.token)
+        self.get_token()
 
     @token_check
     def volume(self, volume):
@@ -62,7 +61,6 @@ class SP:
     @token_check
     def start_playback(self, context_uri=None):
         self.sp.start_playback(self.pi_id, context_uri=context_uri)
-        print("started")
 
     @token_check
     def next_track(self):

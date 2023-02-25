@@ -68,7 +68,7 @@ class Environnement:
             env.change_mode(mode)
 
         try:
-            new_preset = self.list_presets_chosen.get(mode.name)
+            new_preset, marker = self.list_presets_chosen.get(mode.name)
         except KeyError:
             # the env haven't a preset selected for this mode, just keep the actual
             return
@@ -76,10 +76,12 @@ class Environnement:
             old_preset = self.get_preset_select()
             self.calculator.reset()
             if new_preset is not old_preset:
-                marker = old_preset.get_marker()
-                # no keeping deco, just principal state
-                if marker == MARKER.DECO:
-                    marker = MARKER.OFF
+                if marker is None:
+                    marker = old_preset.get_marker()
+                    # no keeping deco, just principal state
+                    if marker == MARKER.DECO:
+                        marker = MARKER.OFF
+                print(f"{self.name} : {marker}")
                 old_preset.reset()
                 new_preset.initialize(marker)
                 self.change_preset_select(new_preset)
@@ -93,8 +95,8 @@ class Environnement:
     def change_preset_select(self, preset):
         self.list_presets.change_select(preset)
 
-    def add_mode(self, mode, preset):
-        self.list_presets_chosen.add(mode, preset)
+    def add_mode(self, mode, preset, marker= None):
+        self.list_presets_chosen.add(mode, (preset, marker))
 
     def get_preset(self, name):
         try:
@@ -169,7 +171,7 @@ class Environnement:
     def __str__(self):
         string = self.name + "\n"
         string += "-Link modes\n"
-        string += "".join(["|  {} => {}\n".format(mode, self.list_presets_chosen.get(mode).name) for mode in self.list_presets_chosen.keys()])
+        string += "".join(["|  {} => {}\n".format(mode, self.list_presets_chosen.get(mode)[0].name) for mode in self.list_presets_chosen.keys()])
         string += "".join("-Objects\n")
         string += "".join(["|  {}\n".format(string) for string in str(self.list_objects).split("\n")])
         string += "".join("-Current_preset\n")

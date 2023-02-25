@@ -13,6 +13,7 @@ class Interrupt_cron(Interrupt):
 
     def start(self):
         hour, minutes, second = self.date.split(":", 3)
+        """
         now = datetime.now().time()
         try:
             # if the hour is already pass today, just do it
@@ -21,6 +22,7 @@ class Interrupt_cron(Interrupt):
                 self.press()
         except:
             pass
+        """
         self.sched.add_job(self.press, 'cron', hour=hour, minute = minutes, second = second)
         self.sched.start()
 

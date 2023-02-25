@@ -2,6 +2,7 @@ import spotipy
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
 from tree.utils.Logger import Logger
+from tree.utils.Locker import Locker
 from data_manager.utils.Secrets import Secrets
 from In_out.sound.spotify.Player import Player
 from In_out.sound.spotify.Track import Track
@@ -14,17 +15,19 @@ from tree.utils.calculs.Variable import Variable
 
 
 
-class Spotify:
+class Spotify(Locker):
     """
     Static spotify class, used by the tree and raspotify
     """
     def __init__(self, name, secrets, pi_id, scenar_start = None, scenar_stop = None,
                         scenar_volume = None, analysis = False, volume_init = 40, save_image=None):
+        Locker.__init__(self)
         self.state = False
         self.process = None
         self.track = None
         self.save_image = save_image
         self.analysis = analysis
+        self.volume_init = volume_init
 
         self.pi_id = pi_id
         self.name_scenar_start = scenar_start
@@ -100,6 +103,7 @@ class Spotify:
             self.track.start_analysis(self.player)
         if self.scenar_start:
             self.scenar_start.do()
+        self.state = True
 
     def playing(self, position):
         if self.analysis:
@@ -108,6 +112,7 @@ class Spotify:
             self.player.set(int(position))
         if not(self.state) and self.scenar_start:
             self.scenar_start.do()
+        self.state = True
 
     def pausing(self, position):
         if self.analysis:
@@ -115,12 +120,14 @@ class Spotify:
             print("music = {} : player = {} : diff = {}".format(position, self.player.tps, int(position)-self.player.tps))
         if self.state and self.scenar_stop:
             self.scenar_stop.do()
+        self.state = False
 
     def stoping(self):
         if self.analysis:
             self.player.stop()
         if self.state and self.scenar_stop:
             self.scenar_stop.do()
+        self.state = False
 
     def changing_volume(self, volume):
         if self.scenar_volume:
@@ -131,32 +138,14 @@ class Spotify:
         if self.analysis:
             self.track.start_analysis(self.player)
 
-    def inter(self, getter, status, volume, track, position):
-        Logger.debug("Spotify : {} : volume={} : track ={} : position {}".format(status, volume, track, position))
-        if status == "start":
-            self.starting(track)
-        elif status == "playing":
-            self.playing(position)
-            self.state = True
-        elif status == "paused":
-            self.pausing(position)
-            self.state = False
-        elif status == "stop":
-            self.stoping()
-            self.state = False
-        elif status == "volume_set":
-            self.changing_volume(volume)
-        elif status == "change":
-            self.changing_track(track)
-
     def get_volume(self):
         try:
             device = self.sp.current_playback()["device"]
             if device['id'] == self.pi_id:
                 return device["volume_percent"]
-            return None
+            return self.volume_init
         except TypeError:
-            return None
+            return self.volume_init
 
     def set_volume(self, volume):
         self.sp.volume(volume)
@@ -164,24 +153,31 @@ class Spotify:
     def next_track(self):
         self.sp.next_track()
 
-    def kill(self):
+    def stop(self):
         if self.state:
             try:
                 self.sp.pause_playback()
+                print(f"kill spotify")
             except spotipy.exceptions.SpotifyException:
                 os.system("sudo systemctl restart raspotify.service")
 
     def start(self, attemps = 0, context_uri = None):
-        print(f"start spotify {self.state}, {context_uri}")
         if not(self.state) or context_uri:
+            self.state = True
             try:
                 self.sp.start_playback(context_uri=context_uri)
                 self.sp.repeat("context")
+                print(f"start spotify {self.state}, {context_uri}")
             except spotipy.exceptions.SpotifyException as e:
                 os.system("sudo systemctl restart raspotify.service")
                 sleep(2)
-                if attemps < 3:
-                    self.start(attemps+1)
-                else:
+                try:
+                    self.sp.start_playback(context_uri=context_uri)
+                    self.sp.repeat("context")
+                    print(f"start spotify {self.state}, {context_uri}")
+                except spotipy.exceptions.SpotifyException as e:
                     Logger.error("Could not start raspotify : "+str(e))
+                    self.state = False
 
+    def is_started(self):
+        return self.state

@@ -1,4 +1,5 @@
 from In_out.network.Client import Client
+from In_out.network.UDP_Server import UDP_Server
 try:
     import RPi.GPIO as GPIO
 except (RuntimeError, ModuleNotFoundError):
@@ -14,6 +15,7 @@ class Interrupts_manager:
         self.list_extender_interrupts = []
         self.list_others_interrupts = []
         self.client = Client() # connect to the tree process
+        self.server = UDP_Server(self.client) # network external interrupt
         GPIO.setmode(GPIO.BCM)
 
     def get_client(self):
@@ -24,6 +26,7 @@ class Interrupts_manager:
         self.client.start()
         for inter in self.list_others_interrupts:
             inter.start()
+        self.server.start()
 
     def add_interrupt_extender(self, inter):
         self.list_extender_interrupts[((inter.pin-1)//8)].add(inter, (inter.pin-1) % 8)
