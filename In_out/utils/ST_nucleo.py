@@ -61,7 +61,7 @@ class ST_nucleo:
             v2 += 1
         if self.port:
             self.port.write([carte, triak, v1, v2, state.value])
-        sleep(0.02) # time needed to make sure all data succeed
+        sleep(0.025) # time needed to make sure all data succeed
         self.mutex.release()
 
     def __str__(self):

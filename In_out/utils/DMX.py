@@ -46,6 +46,7 @@ class DMX:
         self.baudrate = baudrate
         self.timeout = timeout
         self.auto_submit = auto_submit
+        self.port_string = port_string
 
         self._conn = serial.Serial(
             port_string,
@@ -57,6 +58,13 @@ class DMX:
         self._last_submitted_channels = bytearray(self.dmx_size)
         self._signal_start = bytearray([0x7E])
         self._signal_end = bytearray([0xE7])
+
+    def connect(self):
+        self._conn = serial.Serial(
+            self.port_string,
+            baudrate=self.baudrate,
+            timeout=self.timeout
+            )
 
     def _auto_submit(f):
         """

@@ -6,7 +6,7 @@ class Dmx_network(Dmx_controller):
     send dmx order to a rpi through the network
     """
     def __init__(self, rpi, transmitters = []):
-        Dmx_controller.__init__(self, transmitters)
+        Dmx_controller.__init__(self, "", transmitters)
         self.rpi = rpi
 
     def set(self, channel, value):

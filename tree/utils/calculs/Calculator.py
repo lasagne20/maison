@@ -25,7 +25,7 @@ class Calculator:
         string = str(expression)
         if string:
             # search for variables names
-            for var in re.split("[\\*,\\-,\\+,\\/,\\(,\\),<,>,|,==,!= ]", string):
+            for var in re.split("[\\*,\\-,\\+,\\/,\\(,\\),<,>,|,==,!=, &]", string):
                 if not(var):
                     continue
                 try:

@@ -18,7 +18,7 @@ class Interrupt_cron(Interrupt):
             # if the hour is already pass today, just do it
             # /!\ need to define the cron in data in the order of time
             if int(hour) < int(now.hour) or (int(hour) == int(now.hour) and int(minutes) < int(now.minute)):
-                self.press()
+                self.press(state=True)
         except:
             pass
         self.sched.add_job(self.press, 'cron', hour=hour, minute = minutes, second = second)

@@ -78,6 +78,7 @@ class DAX66:
         output = self.port.readline()
         sleep(0.1)
         self.mutex.release()
+        print(output)
 
         return int(output[-4:-2])
 
