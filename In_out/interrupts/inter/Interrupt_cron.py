@@ -26,8 +26,5 @@ class Interrupt_cron(Interrupt):
         self.sched.add_job(self.press, 'cron', hour=hour, minute = minutes, second = second)
         self.sched.start()
 
-
-
-
     def __str__(self):
         return "type : cron | date : {}".format(self.date)

@@ -1,10 +1,10 @@
 from data_manager.utils.Csv_reader import Csv_reader
 
-from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap
+from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, Store
 from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy_laser, Strombo
 
 from tree.scenario.instructions.utils.Delay import Delay
-from tree.scenario.instructions import Instruction_button, TYPE_BUTTON, Instruction_trap, TYPE_INST_TRAP
+from tree.scenario.instructions import Instruction_button, TYPE_BUTTON, Instruction_trap, TYPE_INST_TRAP, Instruction_store
 from tree.scenario.instructions import Instruction_spotify, TYPE_INST_SPOTIFY, Instruction_variable, Instruction_interrupt
 from tree.scenario.instructions import Instruction_mode, Instruction_speaker
 from tree.scenario.instructions.light import Instruction_color, Instruction_dimmer, Instruction_force, Instruction_power
@@ -88,6 +88,10 @@ def get_inst_force(env, name, delay, duration, args, synchro):
 def get_inst_dimmer(env, name, delay, duration, args, synchro):
     light = name.get_object(env, (Dimmable_light, Dmx_dimmable_light, Lyre, Strombo))
     return Instruction_dimmer(env.get_calculator(), light, args, duration, delay, synchro)
+
+def get_inst_store(env, name, delay, duration, args, synchro):
+    store = name.get_object(env, Store)
+    return Instruction_store(env.get_calculator(), store, int(args), duration, delay, synchro)
 
 def get_inst_color(env, name, delay, duration, args, synchro):
     dimmer, color = args.split(",", 2)
@@ -181,6 +185,7 @@ TYPE = {"button_secondary" : get_inst_button_sec,
         "spotify": get_inst_spotify,
         "interrupt": get_inst_interrupt,
         "trap" : get_inst_trap,
+        "store" : get_inst_store,
         "variable": get_inst_variable,
         "pc" : get_inst_pc,
         "amp": get_inst_amp,

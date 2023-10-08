@@ -6,6 +6,7 @@ from web_app.manager.Section import Section
 from web_app.manager.icons.Icon_button import Icon_button
 from web_app.manager.icons.Icon_redirect import Icon_redirect
 from web_app.manager.icons.Icon_slider import Icon_slider
+from web_app.manager.icons.Icon_time import Icon_time
 
 from tree.utils.Color import Color
 
@@ -105,6 +106,13 @@ def get_icon(name, icon, env=None):
         image, background_color = icon.get_str("background_image"), icon.get_str("background_color")
         maxi, mini = icon.get_int("max_value", mandatory=True), icon.get_int("min_value", mandatory=True)
         return Icon_slider(name, str(env), mini, maxi, image, background_color, lenght, index)
+
+    elif str(type_icon) == "time":
+        image, background_color = icon.get_str("background_image"), icon.get_str("background_color")
+        value = icon.get_str("default")
+        return Icon_time(name, str(env), value, image, background_color, lenght, index)
+
+
 
     type_icon.raise_error("Type icon unknown")
 

@@ -2,6 +2,8 @@ from In_out.utils.DMX import DMX
 from In_out.dmx.controllers.Dmx_controller import Dmx_controller
 from tree.utils.Logger import Logger
 from threading import Lock
+from serial.serialutil import SerialException
+from time import sleep
 
 class KingDMX(Dmx_controller):
     """
@@ -17,4 +19,12 @@ class KingDMX(Dmx_controller):
     def set(self, channel, value):
         super().set(channel, value)
         if self.dmx:
-            self.dmx.set_channel(channel, int(value))
+            try:
+                self.dmx.set_channel(channel, int(value))
+            except SerialException as e:
+                Logger.error(e)
+                self.dmx.close()
+                sleep(1)
+                self.dmx = DMX(self.addr, auto_submit=True)
+                self.dmx.set_channel(channel, int(value))
+

@@ -18,5 +18,3 @@ config_peripherics(getter)
 config_tree(getter)
 
 Server(getter).start()
-
-

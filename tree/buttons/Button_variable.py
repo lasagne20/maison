@@ -12,7 +12,7 @@ class Button_variable(Button):
         return self.variable.get()
 
     def press(self, val = None):
-        if val:
+        if val is not None:
             self.variable.set(val)
 
     def __eq__(self, other):

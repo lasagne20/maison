@@ -53,12 +53,17 @@ class Reader:
                 method(new_dict)
         return new_dict
 
-    def get_int(self, arg, mandatory = False):
+    def get_int(self, arg, mandatory = False, keep_in_string=False):
+        """Get the int value of the reader
+        keep_in_string: keep the value in string if it is not an integer
+        """
         # allow to return directly an integer
         value = self.get(arg, mandatory = mandatory)
         try:
             return int(value)
         except (ValueError, TypeError):
+            if keep_in_string:
+                return str(value)
             if mandatory:
                 self.raise_error("The argument {} need to be an interger".format(arg))
 

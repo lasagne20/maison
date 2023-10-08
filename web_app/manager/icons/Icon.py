@@ -7,6 +7,7 @@ class TYPE_ICON(Enum):
     link = 2
     text = 0
     slider = 3
+    time = 4
 
 class Icon:
     """

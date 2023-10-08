@@ -10,7 +10,7 @@ class BULD(Enum):
     buld is define by the last number of the serial number of the buld
     """
     # type  = (maxi,mini)
-    buld_63 = (400,80)
+    buld_63 = (370,80)
     buld_65 = (400,160)
     buld_91 = (430,50)
     buld_64 = (430,180)

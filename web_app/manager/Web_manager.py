@@ -28,10 +28,10 @@ class Web_manager:
         button = section.get_icon(button)
         button.press(self.client, "{}.{}.".format(self.get_active_page().name, section.name))
 
-    def move_slider(self, section, slider, value):
+    def move(self, section, icon, value):
         section = self.get_active_page().get_section(section)
-        slider = section.get_icon(slider)
-        slider.move(self.client, "{}.{}.".format(self.get_active_page().name, section.name), value)
+        icon = section.get_icon(icon)
+        icon.move(self.client, "{}.{}.".format(self.get_active_page().name, section.name), value)
 
     def pack(self):
         # setup the actual page

@@ -18,7 +18,7 @@ class Instruction_color(Instruction_light):
         self.eval(self.color)
         self.eval(self.dimmer)
 
-    def run(self, barrier):
+    def run(self, barrier=None):
         delay = time.time()
         
         try:
@@ -36,7 +36,8 @@ class Instruction_color(Instruction_light):
                 return
 
             if (dimmer_final == dimmer_initial and color == self.light.color):
-                barrier.wait()
+                if barrier is not None:
+                    barrier.wait()
                 return
             nb_dots = RESOLUTION*self.eval(self.duration)
             if dimmer_initial != dimmer_final:
@@ -48,17 +49,20 @@ class Instruction_color(Instruction_light):
 
             connected = self.light.connect()
             if not(connected):
-                barrier.wait()
+                if barrier is not None:
+                    barrier.wait()
                 return
             super().run(time_spent=(time.time()-delay))
             assert not self.light.test()
 
-            barrier.wait()
+            if barrier is not None:
+                barrier.wait()
             for dim, value_color in zip(liste_dimmer, liste_color):
                 assert not self.light.test()
                 self.light.set_color(dim, value_color)
                 time.sleep(1/RESOLUTION)
-                barrier.wait()
+                if barrier is not None:
+                    barrier.wait()
             self.light.set_color(dimmer_final, color.value)
             self.light.disconnect()
         except AssertionError:

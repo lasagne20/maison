@@ -86,7 +86,7 @@ def get_variables(variables, *args):
     env.add_variable(Variable_env(variables.get_getter().get_tree()), recursive=False)
     for var in variables:
         env.add_variable(Variable(var.get_str("name", mandatory = True),
-                                  var.get_int("value", mandatory = True)))
+                                  var.get_int("value", mandatory = True, keep_in_string=True)))
 
         
 

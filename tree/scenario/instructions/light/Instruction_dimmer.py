@@ -14,7 +14,7 @@ class Instruction_dimmer(Instruction_light):
         super().initialize()
         self.eval(self.dimmer)
 
-    def run(self, barrier):
+    def run(self, barrier= None):
         """
         Setup a try/finally to allow kill from another instruction
         """
@@ -30,7 +30,8 @@ class Instruction_dimmer(Instruction_light):
                 return
 
             if not self.light.connect():
-                barrier.wait()
+                if barrier is not None:
+                    barrier.wait()
                 return
             super().run(time_spent=(time.time()-delay))
             assert not self.light.test()
@@ -38,7 +39,8 @@ class Instruction_dimmer(Instruction_light):
                 self.light.set_dimmer(dimmer_final)
                 self.light.disconnect()
                 return
-            barrier.wait()
+            if barrier is not None:
+                barrier.wait()
             val = dimmer_initial
             debut = time.time()
             for _ in range(0,nb_dots):

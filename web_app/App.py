@@ -23,12 +23,12 @@ class App:
             # TODO send to the js infos to no reload the page
             return {}
 
-        @self.site.route('/move_slider', methods = ['POST'])
-        def move_slider():
+        @self.site.route('/move', methods = ['POST'])
+        def move():
             id = request.form['id']
             value = request.form['value']
             section, button = id.split(",")
-            self.manager.move_slider(section, button, int(value))
+            self.manager.move(section, button, value)
             # TODO send to the js infos to no reload the page
             return {}
 

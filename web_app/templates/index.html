@@ -16,8 +16,11 @@
                 {% elif icon.get_type() == TYPE_ICON.link %}
                     <a href="{{icon.get_link()}}"><img src={{url_for('static', filename=icon.get_image())}} style="{{icon.get_style()}}"></a>
                 {% elif icon.get_type() == TYPE_ICON.slider %}
-                <input oninput="move(id, value)" type="range" min="{{icon.get_min()}}" max="{{icon.get_max}}" value="{{icon.get_value()}}"
-                                id="{{section.name+","+icon.name}}" style="{{icon.get_style()}}">
+                    <input oninput="move(id, value)" type="range" min="{{icon.get_min()}}" max="{{icon.get_max}}" value="{{icon.get_value()}}"
+                                    id="{{section.name+","+icon.name}}" style="{{icon.get_style()}}" />
+                {% elif icon.get_type() == TYPE_ICON.time %}
+                    <input oninput="move(id, value)" type="time" id="{{section.name+","+icon.name}}"
+                                    style="{{icon.get_style()}}" value="{{icon.get_value()}}" />
                 {% endif %}
             {% endfor %}
         </div>

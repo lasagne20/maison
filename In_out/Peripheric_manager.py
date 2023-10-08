@@ -1,4 +1,5 @@
 from threading import Thread
+from In_out.external_boards.relay.Relay_GPIO import Relay_GPIO
 
 class Peripheric_manager:
     """
@@ -8,6 +9,7 @@ class Peripheric_manager:
 
     def __init__(self):
         self.list_boards_relay = []
+        self.gpio = {}
         self.dmx = None
         self.name = None
         self.port_extender = None
@@ -96,6 +98,13 @@ class Peripheric_manager:
             if relay: return relay
             raise(IndexError("There are no relay number {} in th board index {}".format(index_relay, index_board)))
         raise(IndexError("There are no board with the index {} configured".format(index_board)))
+
+    def get_gpio(self, index):
+        if index in self.gpio:
+            return self.gpio[index]
+        relay = Relay_GPIO(index)
+        self.gpio[index] = relay
+        return relay
 
     def get_triak(self, index_board, index_triak):
         # search witch st is it

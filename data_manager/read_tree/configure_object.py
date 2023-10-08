@@ -1,6 +1,6 @@
 from data_manager.utils.Csv_reader import Csv_reader
 
-from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, BULD
+from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, BULD, Store
 from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy_laser, Strombo, Dmx_strip_led
 
 from In_out.bluetooth_devices import ELK_BLEDOM, LEDBLE, TRIONES
@@ -49,7 +49,7 @@ def get_led(getter, name, sub_type, relay_triak, addr):
     return Led(name, relay_triak.get_relay(mandatory=False), controller)
 
 def get_lamp(getter, name, sub_type, relay_triak, addr):
-    return Lamp(name, relay_triak.get_relay())
+    return Lamp(name, relay_triak.get_relay(), invert=(str(sub_type) == "invert"))
 
 def get_speakers(getter, name, sub_type, relay_triak, addr):
     index_channel = relay_triak.get_int("index", mandatory = True)
@@ -66,6 +66,10 @@ def get_trap(getter, name, sub_type, relay_triak, addr):
     if sensor_addr[1] == "rpi":
         sensor = Sensor_GPIO("Trap_closed_sensor", int(sensor_addr[0]))
     return Trap("Trap", getter.get_relay(relay_up), getter.get_relay(relay_down), getter.get_relay(magnet), sensor)
+
+def get_store(getter, name, sub_type, relay_triak, addr):
+    relay_up_down = getter.get_addr(str(addr))
+    return Store(name, getter.get_relay(*relay_up_down), relay_triak.get_relay(), int(sub_type))
 
 def get_crazy(getter, name, sub_type, relay_triak, addr):
     if not(str(addr)):
@@ -91,6 +95,7 @@ TYPE = {"dimmable" : get_dimmable,
         "lamp" : get_lamp,
         "speakers" : get_speakers,
         "trap" : get_trap,
+        "store" : get_store,
         "crazy_2" : get_crazy,
         "laser" : get_laser,
         "lyre" : get_lyre,
