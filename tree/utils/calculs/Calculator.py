@@ -3,6 +3,12 @@ from random import randint
 from tree.scenario.Scenario import MARKER
 from tree.utils.Logger import Logger
 import re
+from datetime import datetime
+
+def time():
+    # return the time of the day in second
+    t = datetime.now().time()
+    return (t.hour * 60 + t.minute) * 60 + t.second
 
 class Calculator:
     """
@@ -31,12 +37,12 @@ class Calculator:
                     try:
                         int(var, 16)
                     except ValueError:
-                        if var not in ("False", "True", "not", "randint"):
+                        if var not in ("False", "True", "not", "randint", "time"):
                             # replace the var_name by it's value
                             string = string.replace(var,"self.get_value(\"{}\",expression, inst)".format(var))
             try:
                 return eval(string)
-            except SyntaxError as e:
+            except (SyntaxError, TypeError) as e:
                 expression.raise_error(f"{e} in {string}")
 
     def get_value(self, var_name, expression, inst):
@@ -45,7 +51,7 @@ class Calculator:
         except ValueError:
             cutted_name = var_name.split(".")[0]
             try:
-                return self.variables.get(cutted_name).get(inst, var_name)
+                return self.variables.get(cutted_name).get_float(inst, var_name)
             except KeyError:
                 expression.raise_error("Could not find the variable {}".format(var_name))
 

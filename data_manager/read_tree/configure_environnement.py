@@ -6,6 +6,7 @@ from data_manager.utils.Csv_reader import Csv_reader
 from data_manager.utils.file_manager import list_folders
 
 from tree.utils.calculs.Variable import Variable 
+from tree.utils.calculs.Variable_time import Variable_time
 from tree.utils.calculs.Variable_env import Variable_env
 from tree.utils.calculs.Variable_spotify import Variable_spotify
 from tree.scenario.Scenario import MARKER
@@ -84,8 +85,19 @@ def get_variables(variables, *args):
     except NameError:
         pass
     env.add_variable(Variable_env(variables.get_getter().get_tree()), recursive=False)
+
     for var in variables:
-        env.add_variable(Variable(var.get_str("name", mandatory = True),
+        var_type = Variable
+        try:
+            var_type_str = var.get_str("type")
+            if var_type_str == "time":
+                var_type = Variable_time
+
+        except NameError:
+            pass
+
+
+        env.add_variable(var_type(var.get_str("name", mandatory = True),
                                   var.get_int("value", mandatory = True, keep_in_string=True)))
 
         

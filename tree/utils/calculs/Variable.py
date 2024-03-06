@@ -23,6 +23,9 @@ class Variable:
                 return val
         return self.val
 
+    def get_float(self, inst=None, arg=None):
+        return self.get(inst, arg)
+
     def add_inst(self, inst):
         self.list_inst.add(inst.get_id(), inst)
 

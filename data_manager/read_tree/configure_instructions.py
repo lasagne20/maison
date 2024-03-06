@@ -1,7 +1,7 @@
 from data_manager.utils.Csv_reader import Csv_reader
 
 from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, Store
-from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy_laser, Strombo
+from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy_laser, Strombo, Dmx_led_panel
 
 from tree.scenario.instructions.utils.Delay import Delay
 from tree.scenario.instructions import Instruction_button, TYPE_BUTTON, Instruction_trap, TYPE_INST_TRAP, Instruction_store
@@ -9,7 +9,7 @@ from tree.scenario.instructions import Instruction_spotify, TYPE_INST_SPOTIFY, I
 from tree.scenario.instructions import Instruction_mode, Instruction_speaker
 from tree.scenario.instructions.light import Instruction_color, Instruction_dimmer, Instruction_force, Instruction_power
 from tree.scenario.instructions.light.dmx import Instruction_color_wheel, Instruction_gobo, Instruction_position, Instruction_program
-from tree.scenario.instructions.light.dmx import Instruction_speed, Instruction_strombo
+from tree.scenario.instructions.light.dmx import Instruction_speed, Instruction_strombo, Instruction_rgbw
 from tree.scenario.instructions.Instruction_PC import Instruction_PC, ACTIONS
 
 from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, BULD
@@ -88,6 +88,11 @@ def get_inst_force(env, name, delay, duration, args, synchro):
 def get_inst_dimmer(env, name, delay, duration, args, synchro):
     light = name.get_object(env, (Dimmable_light, Dmx_dimmable_light, Lyre, Strombo))
     return Instruction_dimmer(env.get_calculator(), light, args, duration, delay, synchro)
+
+def get_inst_rgbw(env, name, delay, duration, args, synchro):
+    light = name.get_object(env, (Dmx_led_panel,))
+    dimmer, color, white = args.split(",", 3)
+    return Instruction_rgbw(env.get_calculator(), light, dimmer, duration, delay, synchro, color, white)
 
 def get_inst_store(env, name, delay, duration, args, synchro):
     store = name.get_object(env, Store)
@@ -200,4 +205,5 @@ TYPE = {"button_secondary" : get_inst_button_sec,
         "program" : get_inst_program,
         "speed" : get_inst_speed,
         "strombo" : get_inst_strombo,
+        "rgbw" : get_inst_rgbw,
         "mode" : get_inst_mode}

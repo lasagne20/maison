@@ -1,7 +1,7 @@
 from data_manager.utils.Csv_reader import Csv_reader
 
 from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, BULD, Store
-from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy_laser, Strombo, Dmx_strip_led
+from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy_laser, Strombo, Dmx_strip_led, Dmx_led_panel
 
 from In_out.bluetooth_devices import ELK_BLEDOM, LEDBLE, TRIONES
 from In_out.wifi_devices import LEDnet
@@ -48,6 +48,15 @@ def get_led(getter, name, sub_type, relay_triak, addr):
         sub_type.raise_error("The sub_type {} is not present in the TYPE_LED".format(str(sub_type)))
     return Led(name, relay_triak.get_relay(mandatory=False), controller)
 
+def get_led_panel(getter, name, sub_type, relay_triak, addr):
+    if not(str(addr)):
+        addr.raise_error("The {} need an address".format(name))
+    if str(sub_type) == "dmx":
+        return Dmx_led_panel(name, relay_triak.get_relay(), int(addr), getter.get_dmx())
+    sub_type.raise_error("The sub_type {} is not present in the TYPE_LED".format(str(sub_type)))
+
+
+
 def get_lamp(getter, name, sub_type, relay_triak, addr):
     return Lamp(name, relay_triak.get_relay(), invert=(str(sub_type) == "invert"))
 
@@ -92,6 +101,7 @@ def get_strombo(getter, name, sub_type, relay_triak, addr):
 
 TYPE = {"dimmable" : get_dimmable,
         "led" : get_led,
+        "led_panel" : get_led_panel,
         "lamp" : get_lamp,
         "speakers" : get_speakers,
         "trap" : get_trap,
