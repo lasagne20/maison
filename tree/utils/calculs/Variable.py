@@ -2,6 +2,7 @@ from tree.utils.Dico import Dico
 from threading import Thread
 from tree.utils.Logger import Logger
 from tree.scenario.instructions.light.Instruction_light import Instruction_light
+from tree.scenario.instructions.Instruction_variable import Instruction_variable
 
 class Variable:
     """
@@ -27,6 +28,9 @@ class Variable:
         return self.get(inst, arg)
 
     def add_inst(self, inst):
+        if isinstance(inst, Instruction_variable):
+            # Don't redo instruction for Instruction variable to prevent bug
+            return
         self.list_inst.add(inst.get_id(), inst)
 
     def reset(self):

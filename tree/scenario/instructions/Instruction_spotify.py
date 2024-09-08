@@ -1,5 +1,6 @@
 from tree.scenario.instructions.Instruction import Instruction
 from tree.utils.Logger import Logger
+import subprocess
 from enum import Enum
 import time
 
@@ -9,6 +10,7 @@ class TYPE_INST_SPOTIFY(Enum):
     volume = 2
     next_track = 3
     start_playlist = 4
+    play_sound = 5
 
 
 RESOLUTION = 1
@@ -34,6 +36,8 @@ class Instruction_spotify(Instruction):
             self.spotify.start(context_uri=str(self.val))
         elif self.type_inst == TYPE_INST_SPOTIFY.next_track:
             self.spotify.next_track()
+        elif self.type_inst == TYPE_INST_SPOTIFY.play_sound:
+            subprocess.run(["mpg123", "-q", str(self.val)])
 
     def _set_volume(self):
         try:

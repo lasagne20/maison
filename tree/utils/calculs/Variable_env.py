@@ -30,6 +30,6 @@ class Variable_env(Variable):
                 return env.is_on()
             raise(KeyError("The variable {} in the environnement {} doesn't existe".format(variable_name, path_env)))
 
-    def set(self, val):
-        raise(ReferenceError("Cannot set an this variable"))
+    def set(self, val, duration=0):
+        raise(ReferenceError("Cannot set an environnement variable"))
         

@@ -33,4 +33,4 @@ class LEDnet(Wifi_device):
             self.controler.disconnect()
         # time to make sure the led received the order
         sleep(5)
-        
+ 

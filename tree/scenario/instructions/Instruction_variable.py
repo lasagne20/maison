@@ -22,6 +22,7 @@ class Instruction_variable(Instruction):
         super().initialize()
         self.eval(self.value)
 
+
     def __str__(self):
         string = super().__str__()
         string += "".join("- Type : variable\n")

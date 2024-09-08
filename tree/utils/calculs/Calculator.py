@@ -28,7 +28,7 @@ class Calculator:
         string = str(expression)
         if string:
             # search for variables names
-            for var in re.split("[\\*,\\-,\\+,\\/,\\(,\\),<,>,|,==,!= ]", string):
+            for var in re.split("[\\*,\\-,\\+,\\/,\\(,\\),<,>,&,|,==,\\],\\[,!= ]", string):
                 if not(var):
                     continue
                 try:
@@ -37,7 +37,7 @@ class Calculator:
                     try:
                         int(var, 16)
                     except ValueError:
-                        if var not in ("False", "True", "not", "randint", "time"):
+                        if var not in ("False", "True", "not", "randint", "time", "in"):
                             # replace the var_name by it's value
                             string = string.replace(var,"self.get_value(\"{}\",expression, inst)".format(var))
             try:

@@ -6,13 +6,13 @@ from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy
 from tree.scenario.instructions.utils.Delay import Delay
 from tree.scenario.instructions import Instruction_button, TYPE_BUTTON, Instruction_trap, TYPE_INST_TRAP, Instruction_store
 from tree.scenario.instructions import Instruction_spotify, TYPE_INST_SPOTIFY, Instruction_variable, Instruction_interrupt
-from tree.scenario.instructions import Instruction_mode, Instruction_speaker
+from tree.scenario.instructions import Instruction_mode, Instruction_speaker, Instruction_addresable_led
 from tree.scenario.instructions.light import Instruction_color, Instruction_dimmer, Instruction_force, Instruction_power
 from tree.scenario.instructions.light.dmx import Instruction_color_wheel, Instruction_gobo, Instruction_position, Instruction_program
 from tree.scenario.instructions.light.dmx import Instruction_speed, Instruction_strombo, Instruction_rgbw
 from tree.scenario.instructions.Instruction_PC import Instruction_PC, ACTIONS
 
-from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, BULD
+from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, BULD, Addressable_led
 from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy_laser, Strombo, Dmx_strip_led
 from tree.utils.calculs.Variable import Variable 
 from In_out.network.Rpi import Rpi
@@ -53,7 +53,7 @@ def get_inst_speed(env, name, delay, duration, args, synchro):
     return Instruction_speed(env.get_calculator(), light, args, duration, delay, synchro)
 
 def get_inst_program(env, name, delay, duration, args, synchro):
-    light = name.get_object(env, Crazy_2)
+    light = name.get_object(env, (Crazy_2))
     return Instruction_program(env.get_calculator(), light, args, duration, delay, synchro)
 
 def get_inst_position(env, name, delay, duration, args, synchro):
@@ -84,6 +84,11 @@ def get_inst_amp(env, name, delay, duration, args, synchro):
 def get_inst_force(env, name, delay, duration, args, synchro):
     light = name.get_object(env, Lamp)
     return Instruction_force(env.get_calculator(), light, args, duration, delay, synchro)
+
+def get_inst_addressable(env, name, delay, duration, args, synchro):
+    light = name.get_object(env, Addressable_led)
+    dimmer, program, speed = args.split(",", 3)
+    return Instruction_addresable_led(env.get_calculator(), light, dimmer,program, speed, duration, delay, synchro)
 
 def get_inst_dimmer(env, name, delay, duration, args, synchro):
     light = name.get_object(env, (Dimmable_light, Dmx_dimmable_light, Lyre, Strombo))
@@ -152,7 +157,7 @@ def get_inst_spotify(env, name, delay, duration, args, synchro):
         try:
             type_inst, arg = args.split(",")
             type_inst = TYPE_INST_SPOTIFY[str(type_inst)]
-            if type_inst in [TYPE_INST_SPOTIFY.volume, TYPE_INST_SPOTIFY.start_playlist]:
+            if type_inst in [TYPE_INST_SPOTIFY.volume, TYPE_INST_SPOTIFY.start_playlist, TYPE_INST_SPOTIFY.play_sound]:
                 val = arg
             else:
                 args.raise_error("Spotify action volume, playlist need to have an argument like : volume, 50")
@@ -206,4 +211,5 @@ TYPE = {"button_secondary" : get_inst_button_sec,
         "speed" : get_inst_speed,
         "strombo" : get_inst_strombo,
         "rgbw" : get_inst_rgbw,
+        "addressable" : get_inst_addressable,
         "mode" : get_inst_mode}

@@ -24,10 +24,9 @@ class Dmx_led_panel(Dmx_strip_led):
 
 
     def set_white(self,dimmer, white):
-        white = int(white * dimmer/100)
-        if self.white != white:
-            self.white = white
-        super().set(CHANNEL.white, white)
+        self.white = white
+        dimmed_white = int(white * dimmer/100)
+        super().set(CHANNEL.white, dimmed_white)
 
 class CHANNEL(Enum):
     red = 1

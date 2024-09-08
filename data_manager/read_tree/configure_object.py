@@ -1,10 +1,10 @@
 from data_manager.utils.Csv_reader import Csv_reader
 
-from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, BULD, Store
+from tree.connected_objects import Led, Dimmable_light, Lamp, Speakers, Trap, BULD, Store, Addressable_led
 from tree.connected_objects.dmx import Dmx_dimmable_light, Lyre, Crazy_2, Galaxy_laser, Strombo, Dmx_strip_led, Dmx_led_panel
 
 from In_out.bluetooth_devices import ELK_BLEDOM, LEDBLE, TRIONES
-from In_out.wifi_devices import LEDnet
+from In_out.wifi_devices import LEDnet, H806SB
 from In_out.sensors.Sensor_GPIO import Sensor_GPIO
 
 from enum import Enum
@@ -60,6 +60,9 @@ def get_led_panel(getter, name, sub_type, relay_triak, addr):
 def get_lamp(getter, name, sub_type, relay_triak, addr):
     return Lamp(name, relay_triak.get_relay(), invert=(str(sub_type) == "invert"))
 
+def get_addressable_led(getter, name, sub_type, relay_triak, addr):
+    return Addressable_led(name, relay_triak.get_relay(), H806SB(str(addr)))
+
 def get_speakers(getter, name, sub_type, relay_triak, addr):
     index_channel = relay_triak.get_int("index", mandatory = True)
     name_amp = relay_triak.get_str("board", mandatory = True)
@@ -107,6 +110,7 @@ TYPE = {"dimmable" : get_dimmable,
         "trap" : get_trap,
         "store" : get_store,
         "crazy_2" : get_crazy,
+        "addressable_led" : get_addressable_led,
         "laser" : get_laser,
         "lyre" : get_lyre,
         "strombo" : get_strombo}
